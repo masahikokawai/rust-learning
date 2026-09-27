@@ -1,0 +1,30 @@
+# rust-learning
+
+NEXT_PLAN.md(../frontend_passkey-go_bff-backend-multi/NEXT_PLAN.md)の Rust ライン(Phase 0〜4)を進めるリポジトリ
+
+| ディレクトリ | Phase | 完了条件 | 状態 |
+|---|---|---|---|
+| phase_0_basics | 0 Rust基礎 | rustlings を全問解く / 借用エラーを自分で直せる | 未着手 |
+| phase_1_http_server | 1 HTTP Server 自作 | 負荷をかけてもスレッドプールが詰まらない / Keep-Alive 対応 | 未着手 |
+| phase_2_mini_redis_concurrent_processing_async | 2 Mini Redis + 並行処理/async | redis-cli から GET/SET/DEL/EXPIRE ができる | 未着手 |
+| phase_3_persistence_wal_snapshot_recovery | 3 永続化 | kill -9 の後に再起動してもデータが戻る | 未着手 |
+| phase_4_db_storage_engine_lsm_btree | 4 Storage Engine | mini-lsm の各章のテストが通る | 未着手 |
+
+## 構成についての方針
+- Cargo workspace は使わず、Phase ごとに独立したプロジェクトにしている
+  (target/ が分かれる、依存を毎回ビルドする、などのデメリットも体験するため)
+- phase_0_basics は入れ物のディレクトリで、中に rustlings と、テーマごとの小さな練習を置く
+
+## 進め方のルール
+- 各 Phase が終わったら Git のタグを付ける(例: phase-0-done)
+- 詰まったときだけ参考実装を見る
+- Phase 2 → 3 は、前の Phase のコードをコピーして始める(方法は下記)
+
+## 前の Phase のコードを次へ持っていく手順
+(Phase 2 の完了後、Phase 3 を始めるときの例)
+
+    rsync -a --exclude target \
+      phase_2_mini_redis_concurrent_processing_async/ \
+      phase_3_persistence_wal_snapshot_recovery/
+    # コピーした Cargo.toml の name を phase_3_persistence_wal_snapshot_recovery に書き換える
+    # Cargo.lock もコピーされるので、依存のバージョンは Phase 2 と同じになる

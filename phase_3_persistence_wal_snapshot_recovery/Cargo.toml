@@ -1,0 +1,6 @@
+[package]
+name = "phase_3_persistence_wal_snapshot_recovery"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]

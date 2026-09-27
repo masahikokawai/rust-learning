@@ -1,0 +1,15 @@
+# Cargo のビルド成果物(各プロジェクトの直下にできる)
+**/target/
+
+# macOS
+.DS_Store
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+
+# Phase 3 以降で WAL や Snapshot を書き出す場所(作るときに名前を合わせる)
+**/data/
+*.wal
+*.snapshot
