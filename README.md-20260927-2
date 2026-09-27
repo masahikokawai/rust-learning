@@ -43,6 +43,13 @@
 - Rust は公式のインストーラー(rustup)で管理する
   Homebrew の `rust` や `rustup` は使わない(同じ名前のコマンドを持つので、両方あるとどちら  なる)
 
+作業するディレクトリを変数にしておく(以降の手順はすべてこの変数を使う)
+
+```sh
+export REPO="$HOME/git/rust-learning"
+```
+
+新しくターミナルを開いたときは、この `export` をもう一度実行すること
 
 ### 1. Xcode Command Line Tools と Git
 
@@ -111,9 +118,42 @@ rustup component list --installed    # rustfmt、clippy、rust-analyzer が含�
 | rustup 自体 | `rustup self update` |
 | Rust(コンパイラ) | `rustup update` |
 
-### 3. Phase ごとのディレクトリを作る
+### 3. リポジトリを作る
 
 ```sh
+mkdir -p "$REPO"
+cd "$REPO"
+git init                             # cargo new より先に行う(各プロジェクトに .git が入れ
+```
+
+`.gitignore` を作る
+
+```sh
+cat > "$REPO/.gitignore" <<'GITIGNORE'
+# Cargo のビルド成果物(各プロジェクトの直下にできる)
+**/target/
+
+# macOS
+.DS_Store
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+
+# Phase 3 以降で WAL や Snapshot を書き出す場所(作るときに名前を合わせる)
+**/data/
+*.wal
+*.snapshot
+GITIGNORE
+```
+
+確認: `ls -a "$REPO"` で `.git` と `.gitignore` があること
+
+### 4. Phase ごとのディレクトリを作る
+
+```sh
+cd "$REPO"
 mkdir phase_0_basics                 # 入れ物のディレクトリ(Cargo プロジェクトにはしない)
 cargo new phase_1_http_server
 cargo new phase_2_mini_redis_concurrent_processing_async
@@ -124,29 +164,40 @@ cargo new phase_4_db_storage_engine_lsm_btree --lib   # ライブラリとして
 確認:
 
 ```sh
-ll -d phase_*                                        # 5つのディレクトリがあること
-find /your-path/rust-learning -maxdepth 2 -name .git # $REPO/.git の1つだけであること
-grep '^name' phase_*/Cargo.toml                      # name がディレクトリ名と一致していること
-ls phase_4_db_storage_engine_lsm_btree/src           # lib.rs であること
+ls -d "$REPO"/phase_*                                # 5つのディレクトリがあること
+find "$REPO" -maxdepth 2 -name .git                  # $REPO/.git の1つだけであること
+grep '^name' "$REPO"/phase_*/Cargo.toml              # name がディレクトリ名と一致していること
+ls "$REPO/phase_4_db_storage_engine_lsm_btree/src"   # lib.rs であること
 ```
 
 ディレクトリ名を後から変えるときは、`Cargo.toml` の `name` も合わせて変え、`cargo clean` してからビルドし直すこと
 
-### 4. ビルドを確認する
+### 5. ビルドを確認する
 
 ```sh
-(cd phase_1_http_server && cargo run)
-(cd phase_2_mini_redis_concurrent_processing_async && cargo run)
-(cd phase_3_persistence_wal_snapshot_recovery && cargo run)
-(cd phase_4_db_storage_engine_lsm_btree && cargo test)   # ライブラリなのでテストで確認する
-du -sh phase_*/target                                     # target/ はプロジェクト
+(cd "$REPO/phase_1_http_server" && cargo run)
+(cd "$REPO/phase_2_mini_redis_concurrent_processing_async" && cargo run)
+(cd "$REPO/phase_3_persistence_wal_snapshot_recovery" && cargo run)
+(cd "$REPO/phase_4_db_storage_engine_lsm_btree" && cargo test)   # ライブラリなのでテストで確認する
+du -sh "$REPO"/phase_*/target                                     # target/ はプロジェクト
 ```
 
 確認: Phase 1〜3 で `Hello, world!` が表示され、Phase 4 で `test result: ok` が表示されること
 
-### 6. Phase 0 の準備
+### 6. 最初のコミット
 
-#### 6-1. rustlings を入れて初期化する
+```sh
+# cd "$REPO" # 使用してない
+git add .
+git status                           # target/ が含まれていないこと
+git commit -m "Initialize rust-learning with phase 1-4 projects"
+```
+
+`phase_0_basics` は空なので、この時点では Git に表示されない(Git は空のディレクトリを記録し
+
+### 7. Phase 0 の準備
+
+#### 7-1. rustlings を入れて初期化する
 
 ```sh
 cargo install rustlings              # ~/.cargo/bin/rustlings に入る(数分かかる)
@@ -157,7 +208,7 @@ rustlings init                       # $REPO/phase_0_basics/rustlings/ ができ
 ls rustlings  # exercises/、Cargo.toml などがあること
 ```
 
-#### 6-2. テーマごとの練習用プロジェクトを作る
+#### 7-2. テーマごとの練習用プロジェクトを作る
 
 そのテーマに入ったときに1つずつ作ってもよい
 
@@ -171,7 +222,7 @@ cargo new concurrency                # 16章(Arc / Mutex / RwLock / Send・Sync)
 ll
 ```
 
-#### 6-3. コミットする
+#### 7-3. コミットする
 
 ```sh
 git add phase_0_basics
@@ -192,7 +243,7 @@ git commit -m "Add phase 0 basics: rustlings and exercise projects"
 ### 始め方
 
 ```sh
-cd phase_0_basics/rustlings
+cd "$REPO/phase_0_basics/rustlings"
 rustlings                            # 対話形式の画面が開く
 ```
 
