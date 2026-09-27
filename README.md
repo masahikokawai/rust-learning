@@ -187,7 +187,7 @@ du -sh "$REPO"/phase_*/target                                     # target/ は�
 ### 6. 最初のコミット
 
 ```sh
-cd "$REPO"
+# cd "$REPO" # 使用してない
 git add .
 git status                           # target/ が含まれていないこと
 git commit -m "Initialize rust-learning with phase 1-4 projects"
@@ -203,9 +203,9 @@ git commit -m "Initialize rust-learning with phase 1-4 projects"
 cargo install rustlings              # ~/.cargo/bin/rustlings に入る(数分かかる)
 rustlings --version
 
-cd "$REPO/phase_0_basics"
+cd phase_0_basics
 rustlings init                       # $REPO/phase_0_basics/rustlings/ ができる
-ls "$REPO/phase_0_basics/rustlings"  # exercises/、Cargo.toml などがあること
+ls rustlings  # exercises/、Cargo.toml などがあること
 ```
 
 #### 7-2. テーマごとの練習用プロジェクトを作る
@@ -213,20 +213,18 @@ ls "$REPO/phase_0_basics/rustlings"  # exercises/、Cargo.toml などがある�
 そのテーマに入ったときに1つずつ作ってもよい
 
 ```sh
-cd "$REPO/phase_0_basics"
 cargo new ownership_borrowing        # The Book 4章(所有権・借用)
 cargo new structs_enums_match        # 5〜6章(構造体・enum・match)
 cargo new error_handling             # 9章(Result / Option)
 cargo new traits_generics_lifetime   # 10章(トレイト・ジェネリクス・ライフタイム)
 cargo new smart_pointers             # 15章(Box / Rc / RefCell)
 cargo new concurrency                # 16章(Arc / Mutex / RwLock / Send・Sync)
-ls "$REPO/phase_0_basics"
+ll
 ```
 
 #### 7-3. コミットする
 
 ```sh
-cd "$REPO"
 git add phase_0_basics
 git status                           # rustlings/ と練習用プロジェクトが追加され、target/ は含まれないこと
 git commit -m "Add phase 0 basics: rustlings and exercise projects"
